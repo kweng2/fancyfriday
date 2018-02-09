@@ -1,0 +1,25 @@
+<style>
+	img {
+		width: 400px;
+		margin: 20px;
+	}
+</style>
+
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<div id="image-container"></div>
+
+<script>
+	$(document).ready(() => {
+		console.log('document is ready, preparing to load images');
+		const $imageContainer = document.getElementById("image-container");
+
+		$.get('/list').then(data => {
+			data.files.forEach(file => {
+				const imageNode = document.createElement('img')
+				imageNode.src = file.webContentLink;
+				$imageContainer.appendChild(imageNode);
+			});
+		})
+	});
+</script>
