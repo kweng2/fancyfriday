@@ -20,19 +20,15 @@
 		console.log('document is ready, preparing to load images');
 		const $imageContainer = document.getElementById("image-container");
 
-		// $.get('/list').then(data => {
-		// 	data.files.forEach(file => {
-		// 		const imageNode = document.createElement('img')
-		// 		imageNode.src = file.webContentLink;
-		// 		$imageContainer.appendChild(imageNode);
-		// 	});
-		// });
+		$.get('/list').then(data => {
+			data.files.forEach(file => {
+				const imageNode = document.createElement('img')
+				imageNode.src = file.webContentLink;
+				$imageContainer.appendChild(imageNode);
+			});
+		});
 
 		const $button = $('#vote');
-		// const postData = {
-		// 	favorites: [ '123', 'abc', 'xyz' ],
-		// 	winner: '123',
-		// };
 		const postData = {
 			'123123123123': 'something1',
 			'01293': 'something2',

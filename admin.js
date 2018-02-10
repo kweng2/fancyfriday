@@ -47,7 +47,6 @@ const disableVote = (req, res) => {
 			console.log(`Could not read ${newFileName}`);
 			return res.sendStatus(400);
 		}
-		// console.log('Yay', data);
 		const rawData = data.replace(/\n/g, ",").split(',');
 		const map = {};
 		console.log(rawData);
@@ -59,7 +58,6 @@ const disableVote = (req, res) => {
 		})
 		res.send(map);
 	});
-	// res.end();
 };
 
 module.exports = { enableVote, disableVote, getVoteStatus };
