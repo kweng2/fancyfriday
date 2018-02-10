@@ -1,127 +1,129 @@
-<style>
-	body {
-		background-color: #e2e1e0;
-        margin: 0;
-        padding-bottom: 20px;
-	}
-	img {
-        object-fit: contain;
-        width: 100%;
-        margin-bottom: 2rem;
-	}
+<head>
+    <style>
+    	body {
+    		background-color: #e2e1e0;
+            margin: 0;
+            padding-bottom: 20px;
+    	}
+    	img {
+            object-fit: contain;
+            width: 100%;
+            margin-bottom: 2rem;
+    	}
 
-    .checkmark {
-        color: #352384;
-        transition: opacity .2s;
-    }
+        .checkmark {
+            color: #352384;
+            transition: opacity .2s;
+        }
 
-    .button {
-        padding: 2rem;
-        background-color: #ff00bf;
-        background-color: white;
-        font-size: 1.25rem;
-        color: black;
-        border: 0;
-        border-radius: 99999rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    }
+        .button {
+            padding: 2rem;
+            background-color: #ff00bf;
+            background-color: white;
+            font-size: 1.25rem;
+            color: black;
+            border: 0;
+            border-radius: 99999rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
 
-    .button:hover {
-    	background-color: #ff00bf;
-    	color: white;
-    	cursor: pointer;
-    	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-    }
+        .button:hover {
+        	background-color: #ff00bf;
+        	color: white;
+        	cursor: pointer;
+        	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
 
-    .checkmark {
-        color: #352384;
-    }
+        .checkmark {
+            color: #352384;
+        }
 
-    .hidden {
-        opacity: 0;
-    }
+        .hidden {
+            opacity: 0;
+        }
 
-    .form {
-        margin: 0;
-        width: 100%;
-        text-align: center;
-    }
+        .form {
+            margin: 0;
+            width: 100%;
+            text-align: center;
+        }
 
-    .image-wrapper {
-        display: inline-block;
-        padding: 20px;
-        margin: 20px;
-        text-align: center;
-        border-radius: 5px;
-        width: 318px;
-        max-height: 502px;
-        background-color: white;
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-    }
+        .image-wrapper {
+            display: inline-block;
+            padding: 20px;
+            margin: 20px;
+            text-align: center;
+            border-radius: 5px;
+            width: 318px;
+            max-height: 502px;
+            background-color: white;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
 
-    .image-container {
-        display: flex;
-        flex-flow: wrap;
-        justify-content: center;
-        margin: 0 auto;
-    }
+        .image-container {
+            display: flex;
+            flex-flow: wrap;
+            justify-content: center;
+            margin: 0 auto;
+        }
 
-    .image:hover {
-        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-        cursor: pointer;
-    }
+        .image:hover {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            cursor: pointer;
+        }
 
-    .selected {
-        background-color: #ff00bf;
-    }
+        .selected {
+            background-color: #ff00bf;
+        }
 
-    .check-circle {
-        height: 2rem;
-        width: 2rem;
-        border-radius: 50%;
-        border: 2px solid #352384;
-        background-color: white;
-        margin: 0 auto;
-        padding: 5px;
-    }
+        .check-circle {
+            height: 2rem;
+            width: 2rem;
+            border-radius: 50%;
+            border: 2px solid #352384;
+            background-color: white;
+            margin: 0 auto;
+            padding: 5px;
+        }
 
-    .check-circle:hover {
-        cursor: pointer;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-    }
+        .check-circle:hover {
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        }
 
-    .success {
-        height: 100vh
-        width: 100vw;
-        display: flex;
-        align-items: center;
-        text-align: center;
-    }
+        .success {
+            height: 100vh
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
 
-    .none {
-        display: none;
-    }
+        .none {
+            display: none;
+        }
 
-    #outside {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        background-color: rgba(226,225,224,0.9);
-    }
+        #outside {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: rgba(226,225,224,0.9);
+        }
 
-    #viewer {
-        position: fixed;
-        display: block;
-        max-width: 80vw;
-        max-height: 90vh;
-        margin-top: 3vh;
-    }
-</style>
-
-<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+        #viewer {
+            position: fixed;
+            display: block;
+            max-width: 80vw;
+            max-height: 90vh;
+            margin-top: 3vh;
+        }
+    </style>
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    <title>FANCY FRIDAY</title>
+</head>
 <div class="success none">
     <h2>Thanks for voting!</h2>
 </div>
