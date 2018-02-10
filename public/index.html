@@ -1,63 +1,175 @@
-<head>
-	<title>FANCY FRIDAY</title>
-	<link rel="shortcut icon" href="http://example.com/favicon.ico" />
-	<style>
-		img {
-			width: 400px;
-			margin: 20px;
-		}
-	</style>
-</head>
+<style>
+	img {
+        object-fit: contain;
+        width: 100%;
+        margin-bottom: 2rem;
+	}
+
+    .checkmark {
+        color: purple;
+        transition: opacity .2s;
+    }
+
+    .button {
+        padding: 2rem;
+        background-color: hotpink;
+        font-size: 1.25rem;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .checkmark {
+        color: purple;
+    }
+
+    .hidden {
+        opacity: 0;
+    }
+
+    .form {
+        margin: 0;
+        background-color: #8F91FF;
+        padding: 20px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .image-wrapper {
+        display: inline-block;
+        padding: 20px;
+        margin: 20px;
+        text-align: center;
+        border: 1px solid #F3F3F5;
+        min-width: 100px;
+        max-width: 200px;
+    }
+
+    .image-container {
+        display: flex;
+        flex-flow: wrap;
+        justify-content: center;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .selected {
+        background-color: hotpink;
+    }
+
+    .check-circle {
+        height: 2rem;
+        width: 2rem;
+        border-radius: 50%;
+        border: 2px solid purple;
+        background-color: white;
+        margin: 0 auto;
+        padding: 5px;
+    }
+</style>
 
 <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
 
-<div id="image-container"></div>
-
-<button id='vote'>VOTE!</button>
+<div class="form">
+    <h1></h1>
+    <div id="image-container"></div>
+    <div class="button-container">
+        <button class="button" onclick="submit()">Cast your votes NOW</button>
+    </div>
+</div >
 
 <script>
+    const formState = {};
+    function submit() {
+        const length = Object.keys(formState).length;
+        if (length < 3) {
+            alert('You must vote for at least 3 fancy people');
+            return;
+        }
+
+        const settings = {
+            method: 'POST',
+            url: '/vote',
+            contentType: 'application/json',
+            data: JSON.stringify(formState),
+        };
+
+        $.ajax(settings);
+    }
+
+
 	$(document).ready(() => {
 		console.log('document is ready, preparing to load images');
 		const $imageContainer = document.getElementById("image-container");
+        $($imageContainer).addClass('image-container');
+
+        const heading = 'Fancy Friday Ballot for'
+        const date = new Date();
+        const dateString = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
+
+        $('h1').html(`${heading} ${dateString}`);
 
 		$.get('/list').then(data => {
-			data.files.forEach(file => {
+            // for (var i = 1; i < 10 /* data.files.length - 1 */; i++) {
+            for (var i = 1; i < data.files.length - 1; i++) {
+                const file = data.files[i];
+
+                // create a wrapper for the image and the checkbox
+                const wrapper = document.createElement('div');
+                $(wrapper).addClass('image-wrapper');
+                wrapper.id = file.id;
+                wrapper.title = file.name;
+
+                // add the image to the element
 				const imageNode = document.createElement('img')
 				imageNode.src = file.webContentLink;
-				$imageContainer.appendChild(imageNode);
-			});
-		});
+                wrapper.appendChild(imageNode);
 
-		const $button = $('#vote');
-		const postData = {
-			'123123123123': 'something1',
-			'01293': 'something2',
-			'sdlfkjs': 'something3',
-		}
-		const settings = {
-			method: 'POST',
-			url: '/vote',
-			contentType: 'application/json',
-			data: JSON.stringify(postData),
-		};
-		$button.click(event => {
-			console.log('voting');
-			$.ajax(settings);
-		})
+                // create check circle div
+                const checkCircle = document.createElement('div');
+                $(checkCircle).addClass('check-circle');
+
+                const check = document.createElement('img');
+                check.src = './images/checkmark.svg';
+                $(check).addClass('checkmark').addClass('hidden');
+                checkCircle.append(check);
+
+                wrapper.appendChild(checkCircle);
+
+				$imageContainer.appendChild(wrapper);
+			};
+        }).then(() => {
+            attachHandlers();
+        });
 	});
+
+    const attachHandlers = function() {
+        $('.image-wrapper').click(handleImageClick);
+    };
+
+    const handleImageClick = function() {
+        const el = $(this);
+        const isSelected = el.hasClass('selected');
+        if (isSelected) {
+            unselectImage(el);
+        } else {
+            selectImage(el);
+        }
+    }
+
+
+    const selectImage = function(el) {
+        el.addClass('selected');
+        el.find('.checkmark').toggleClass('hidden');
+        const id = el.attr('id');
+        const title = el.attr('title');
+        formState[id] = title;
+    }
+
+    const unselectImage = function(el) {
+        el.removeClass('selected');
+        el.find('.checkmark').toggleClass('hidden');
+        const id = el.attr('id');
+        delete formState[id];
+    }
+
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
