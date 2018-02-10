@@ -1,4 +1,7 @@
 <style>
+	body {
+		background-color: #e2e1e0;
+	}
 	img {
         object-fit: contain;
         width: 100%;
@@ -6,20 +9,30 @@
 	}
 
     .checkmark {
-        color: purple;
+        color: #352384;
         transition: opacity .2s;
     }
 
     .button {
         padding: 2rem;
-        background-color: hotpink;
+        background-color: #ff00bf;
+        background-color: white;
         font-size: 1.25rem;
-        color: white;
-        border-radius: 5px;
+        color: black;
+        border: 0;
+        border-radius: 99999rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    }
+
+    .button:hover {
+    	background-color: #ff00bf;
+    	color: white;
+    	cursor: pointer;
+    	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     }
 
     .checkmark {
-        color: purple;
+        color: #352384;
     }
 
     .hidden {
@@ -28,7 +41,6 @@
 
     .form {
         margin: 0;
-        background-color: #8F91FF;
         padding: 20px;
         width: 100%;
         text-align: center;
@@ -39,28 +51,36 @@
         padding: 20px;
         margin: 20px;
         text-align: center;
-        border: 1px solid #F3F3F5;
+        border-radius: 5px;
+        /*border: 1px solid #352384;*/
         min-width: 100px;
-        max-width: 200px;
+        max-width: 318px;
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+
+    .image-wrapper:hover {
+    	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    	cursor: pointer;
     }
 
     .image-container {
         display: flex;
         flex-flow: wrap;
         justify-content: center;
-        max-width: 1200px;
         margin: 0 auto;
     }
 
     .selected {
-        background-color: hotpink;
+        background-color: #ff00bf;
     }
 
     .check-circle {
         height: 2rem;
         width: 2rem;
         border-radius: 50%;
-        border: 2px solid purple;
+        border: 2px solid #352384;
         background-color: white;
         margin: 0 auto;
         padding: 5px;
@@ -109,7 +129,7 @@
         $('h1').html(`${heading} ${dateString}`);
 
 		$.get('/list').then(data => {
-            // for (var i = 1; i < 10 /* data.files.length - 1 */; i++) {
+            // for (var i = 1; i < 9 /* data.files.length - 1 */; i++) {
             for (var i = 1; i < data.files.length - 1; i++) {
                 const file = data.files[i];
 
