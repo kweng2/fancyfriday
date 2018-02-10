@@ -85,10 +85,24 @@
         margin: 0 auto;
         padding: 5px;
     }
+
+    .success {
+        height: 100vh
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        text-align: center;
+    }
+
+    .none {
+        display: none;
+    }
 </style>
 
 <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
-
+<div class="success none">
+    <h2>Thanks for voting!</h2>
+</div>
 <div class="form">
     <h1></h1>
     <div id="image-container"></div>
@@ -113,7 +127,10 @@
             data: JSON.stringify(formState),
         };
 
-        $.ajax(settings);
+        $.ajax(settings).then(() => {
+        	$('.form').toggleClass('none');
+        	$('.success').toggleClass('none');
+        });
     }
 
 
@@ -129,7 +146,7 @@
         $('h1').html(`${heading} ${dateString}`);
 
 		$.get('/list').then(data => {
-            // for (var i = 1; i < 9 /* data.files.length - 1 */; i++) {
+            // for (var i = 1; i < 25 /* data.files.length - 1 */; i++) {
             for (var i = 1; i < data.files.length - 1; i++) {
                 const file = data.files[i];
 
