@@ -1,25 +1,67 @@
-<style>
-	img {
-		width: 400px;
-		margin: 20px;
-	}
-</style>
+<head>
+	<title>FANCY FRIDAY</title>
+	<link rel="shortcut icon" href="http://example.com/favicon.ico" />
+	<style>
+		img {
+			width: 400px;
+			margin: 20px;
+		}
+	</style>
+</head>
 
 <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
 
 <div id="image-container"></div>
+
+<button id='vote'>VOTE!</button>
 
 <script>
 	$(document).ready(() => {
 		console.log('document is ready, preparing to load images');
 		const $imageContainer = document.getElementById("image-container");
 
-		$.get('/list').then(data => {
-			data.files.forEach(file => {
-				const imageNode = document.createElement('img')
-				imageNode.src = file.webContentLink;
-				$imageContainer.appendChild(imageNode);
-			});
+		// $.get('/list').then(data => {
+		// 	data.files.forEach(file => {
+		// 		const imageNode = document.createElement('img')
+		// 		imageNode.src = file.webContentLink;
+		// 		$imageContainer.appendChild(imageNode);
+		// 	});
+		// });
+
+		const $button = $('#vote');
+		// const postData = {
+		// 	favorites: [ '123', 'abc', 'xyz' ],
+		// 	winner: '123',
+		// };
+		const postData = {
+			'123123123123': 'something1',
+			'01293': 'something2',
+			'sdlfkjs': 'something3',
+		}
+		const settings = {
+			method: 'POST',
+			url: '/vote',
+			contentType: 'application/json',
+			data: JSON.stringify(postData),
+		};
+		$button.click(event => {
+			console.log('voting');
+			$.ajax(settings);
 		})
 	});
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

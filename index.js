@@ -1,20 +1,35 @@
+const fs = require('fs');
 const readline = require('readline');
 const express = require('express');
 const google = require('googleapis');
 const cookieParser = require('cookie-parser')
-const OAuth2Client = google.auth.OAuth2;
-
+const bodyParser = require('body-parser');
 const secret = require('./secret.json');
-const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } = secret;
-const tokens = {
-	exists: false,
-};
 
+let tokenExists = false;
+const OAuth2Client = google.auth.OAuth2;
+const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } = secret;
 const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+
 let drive;
+
+const TOKEN_PATH = './credentials.json'
+let credentials;
+try {
+	credentials = require(TOKEN_PATH);
+	oauth2Client.setCredentials(credentials);
+	drive = google.drive({
+		version: 'v3',
+		auth: oauth2Client,
+	});
+	tokenExists = true;
+} catch (err) {
+	console.log('Must authorize with Google API OAuth 2');
+}
 
 const voteOnce = require('./voteOnce');
 const vote = require('./vote');
+const admin = require('./admin');
 const app = express();
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -38,35 +53,36 @@ app.get('/oauthcallback', (req, res) => {
 				version: 'v3',
 				auth: oauth2Client,
 			});
-			tokens.exists = true;
-			console.log("successfully authenticated, authorized, and set tokens")
+			console.log(returnedTokens);
+			console.log('successfully authenticated and authorized')
+			try {
+				fs.writeFileSync(TOKEN_PATH, JSON.stringify(returnedTokens));
+			} catch (err) {
+				console.log('Could not save to disk');
+			}
+			console.log('Saved token to disk');
+			tokenExists = true;
 			res.redirect('/');
 		}
 	});
 })
 
 app.use((req, res, next) => {
-	if (tokens.exists) {
+	if (tokenExists) {
 		next();
 	} else {
 		const url = oauth2Client.generateAuthUrl({
-			// access_type: 'offline', // will return a refresh token
 			scope: 'https://www.googleapis.com/auth/drive' // can be a space-delimited string or an array of scopes
 		});
 		res.redirect(url);
 	}
 });
+
 ////////////////////////////////////////////////////////////////////////////////////
-
-app.use(cookieParser())
-app.use('/healthcheck', (req, res) => res.sendStatus(200));
-
+///////////////////////////////     Web APIs        ////////////////////////////////
 app.get('/list', (req, res) => {
 	drive.files.list({
-		auth: oauth2Client,
 		q: "mimeType='image/jpeg' and '1G9ehiJw_80qBBBnHDdqI2_B5t2VgIjfL' in parents",
-		// q: "mimeType='application/vnd.google-apps.folder'",
-		// q: "mimeType='image/jpeg'",
 		fields: 'files(id, name, webContentLink, webViewLink)',
 	}, (err, data) => {
 		if (err) {
@@ -81,10 +97,7 @@ app.get('/list', (req, res) => {
 
 app.get('/listFolders', (req, res) => {
 	drive.files.list({
-		auth: oauth2Client,
 		q: "mimeType='application/vnd.google-apps.folder'",
-		// q: "mimeType='application/vnd.google-apps.folder'",
-		// q: "mimeType='image/jpeg'",
 		fields: 'files(id, name)',
 	}, (err, data) => {
 		if (err) {
@@ -97,23 +110,45 @@ app.get('/listFolders', (req, res) => {
 	});
 });
 
-app.use('/vote', voteOnce);
-// app.post('/vote', vote);
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////       VOTING       ////////////////////////////////
+// enforces one time voting, (once per day)
+// app.use('/vote', cookieParser(), voteOnce);
+app.post('/vote', bodyParser.json(), vote);
 
-// app.get('/file', (req, res) => {
-// 	drive.files.get({
-// 		fileId: '1MJ3ir14IT3xgoRgNzGCO0Jv4darQaWK3',
-// 		fields: 'webContentLink,webViewLink',
-// 	}, (err, data) => {
-// 		if (err) {
-// 			console.log(err);
-// 			res.sendStatus(400);
-// 		} else {
-// 			console.log(data.data);
-// 			res.send(data.data);
-// 		}
-// 	});
-// })
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////       ADMIN        ////////////////////////////////
+const { enableVote, disableVote } = admin;
+app.post('/admin/vote/enable', enableVote);
+app.post('/admin/vote/disable', disableVote);
+app.post('/admin/vote/upload', (req, res) => {
+	const currentFileDir = 'results/';
+	const rightNow = new Date();
+	const name = `${rightNow.getFullYear()}_${rightNow.getMonth()}_${rightNow.getDate()}.csv`;
+	const path = `${currentFileDir}/${name}`;
+	var fileMetadata = {
+		'name': name,
+		'mimeType': 'application/vnd.google-apps.spreadsheet'
+	};
+	var media = {
+		mimeType: 'text/csv',
+		body: fs.createReadStream(path)
+	};
+	drive.files.create(
+	{
+		resource: fileMetadata,
+		media: media,
+		fields: 'id'
+	}, function (err, file) {
+		if (err) {
+			console.error('Oh no! Failed to upload results to Google Drive', err);
+			res.sendStatus(400);
+		} else {
+			console.log('Successfully uploaded result to Google Drive');
+			return res.end();
+		}
+	});
+});
 
 app.use(express.static('public'));
 

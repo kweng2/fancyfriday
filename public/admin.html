@@ -1,0 +1,92 @@
+<head>
+	<title>FANCY FRIDAY ADMIN</title>
+	<style>
+	</style>
+</head>
+
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+
+<button id='startVote'>START VOTING</button>
+<button id='endVote'>STOP VOTING</button>
+<button id='upload'>Upload Results</button>
+
+<canvas id="myChart"></canvas>
+
+<script>
+	$(document).ready(() => {
+		const $startButton = $('#startVote');
+		const $endButton = $('#endVote');
+		const $uploadButton = $('#upload');
+		const startSettings = { method: 'POST', url: '/admin/vote/enable' };
+		const endSettings = { method: 'POST', url: '/admin/vote/disable' };
+		const uploadSettings = { method: 'POST', url: '/admin/vote/upload' };
+
+		const ctx = document.getElementById("myChart").getContext('2d');
+
+		$startButton.click(event => {
+			console.log('attempting to enable voting...');
+			$.ajax(startSettings).then(data => {
+				alert('Voting has now begun');
+			}).catch(err => {
+				alert('failed to enable voting');
+			});
+		});
+		$endButton.click(event => {
+			console.log('attempting to disable vote...');
+			$.ajax(endSettings).then(data => {
+				alert('Voting has now stopped');
+				
+				const labels = Object.keys(data);
+				const counts = Object.keys(data).map(id => data[id]);
+				const myChart = new Chart(ctx, {
+				    type: 'bar',
+				    data: {
+				        labels,
+				        datasets: [{
+				            label: '# of Votes',
+				            data: counts,
+				            borderWidth: 1
+				        }]
+				    },
+				    options: {
+				        scales: {
+				            yAxes: [{
+				                ticks: {
+				                    beginAtZero:true
+				                }
+				            }]
+				        }
+				    }
+				});
+				myChart.height = '600px';
+				myChart.width = '600px';
+			}).catch(err => {
+				alert('failed to disable voting');
+			});
+		});
+		$uploadButton.click(event => {
+			console.log('attempting to upload vote result...');
+			$.ajax(uploadSettings).then(data => {
+				alert('Upload successful');
+			}).catch(err => {
+				alert('failed to upload results');
+			});
+		});
+	});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
