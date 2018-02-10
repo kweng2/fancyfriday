@@ -82,20 +82,19 @@ app.use((req, res, next) => {
 ///////////////////////////////     Web APIs        ////////////////////////////////
 app.get('/list', (req, res) => {
 	drive.files.list({
-		q: "mimeType='image/jpeg' and '1G9ehiJw_80qBBBnHDdqI2_B5t2VgIjfL' in parents",
+		q: "mimeType='image/jpeg' and '1G9ehiJw_80qBBBnHDdqI2_B5t2VgIjfL' in parents and trashed=false",
 		fields: 'files(id, name, webContentLink, webViewLink)',
 	}, (err, data) => {
 		if (err) {
 			console.log(err);
 			res.sendStatus(400);
 		} else {
-			console.log(data.data);
 			res.send(data.data);
 		}
 	});
 });
 
-app.get('/listFolders', (req, res) => {
+app.get('/list/folders', (req, res) => {
 	drive.files.list({
 		q: "mimeType='application/vnd.google-apps.folder'",
 		fields: 'files(id, name)',
@@ -104,11 +103,25 @@ app.get('/listFolders', (req, res) => {
 			console.log(err);
 			res.sendStatus(400);
 		} else {
-			console.log(data.data);
 			res.send(data.data);
 		}
 	});
 });
+
+app.get('/list/folders/:id', (req, res) => {
+	const folderId = req.params.id;
+	drive.files.list({
+		q: `'${folderId}' in parents and trashed = false`,
+		fields: 'files(id, name)',
+	}, (err, data) => {
+		if (err) {
+			console.log(err);
+			res.sendStatus(400);
+		} else {
+			res.send(data.data);
+		}
+	});
+})
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////       VOTING       ////////////////////////////////
