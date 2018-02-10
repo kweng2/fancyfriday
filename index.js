@@ -124,7 +124,7 @@ app.post('/admin/vote/disable', disableVote);
 app.post('/admin/vote/upload', (req, res) => {
 	const currentFileDir = 'results/';
 	const rightNow = new Date();
-	const name = `${rightNow.getFullYear()}_${rightNow.getMonth()}_${rightNow.getDate()}.csv`;
+	const name = `${rightNow.getFullYear()}_${rightNow.getMonth()+1}_${rightNow.getDate()}.csv`;
 	const path = `${currentFileDir}/${name}`;
 	var fileMetadata = {
 		'name': name,

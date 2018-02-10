@@ -31,7 +31,7 @@ const enableVote = (req, res) => {
 
 const disableVote = (req, res) => {
 	const rightNow = new Date();
-	const newFileName = `${rightNow.getFullYear()}_${rightNow.getMonth()}_${rightNow.getDate()}.csv`;
+	const newFileName = `${rightNow.getFullYear()}_${rightNow.getMonth()+1}_${rightNow.getDate()}.csv`;
 	const newFilePath = `${currentFileDir}/${newFileName}`;
 	try {
 		fs.copyFileSync(currentFilePath, newFilePath);
