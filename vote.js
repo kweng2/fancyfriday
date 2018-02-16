@@ -16,7 +16,7 @@ const currentFilePath = 'results/current.csv';
 const vote = (req, res) => {
 	if (!getVoteStatus()) {
 		console.log('Voting has closed');
-		return res.sendStatus(400);
+		return res.status(400).send('Voting has closed');
 	}
 	console.log('request body:', req.body);
 
